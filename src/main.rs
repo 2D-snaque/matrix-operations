@@ -186,6 +186,7 @@ fn main() {
         vec![2, 2, 2, 2],
         vec![3, 3, 3, 3],
         vec![4, 4, 4, 4],
+        vec![4, 5, 6, 6],
     ]);
     matrix.determinant().display();
 }
