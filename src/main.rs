@@ -16,17 +16,24 @@ impl Matrix {
         }
     }
 
+    //Initializes a new matrix with the input as the elements
     fn construct(elements: Vec<Vec<i128>>) -> Self {
         Self { elements }
     }
 
+    //returns number of rows in the matrix
     fn get_num_row(&self) -> usize {
         self.elements.len()
     }
 
+    //returns number of columns in the matrix
     fn get_num_col(&self) -> usize {
         self.elements[0].len()
     }
+
+    //Displays the matrix in a readable manner
+    /* TODO: implement the Diplay trait for Matrix
+     */
 
     fn display(&self) {
         for i in &self.elements {
@@ -35,8 +42,10 @@ impl Matrix {
             }
             println!()
         }
+        println!()
     }
 
+    //Constructs a new matrix depending on the Type of Matrix required
     fn new_preset(matrix_type: MatrixTypes) -> Self {
         let mut matrix = Matrix::default();
 
@@ -163,28 +172,40 @@ impl Matrix {
     }
     //Determinant of a matrix
     fn determinant(&self) -> i128 {
-        let mut matrix = Matrix::default();
         let mut list_deter = vec![];
         let mut determinant: i128 = 0;
-
+        if self.get_num_row() <= 2 {
+            if self.get_num_row() == 1 {
+                return self.elements[0][0];
+            }
+            return self.matrix2x2();
+        }
         for j in 0..self.get_num_col() {
-            matrix = Matrix::default();
+            let mut matrix = Matrix::default();
             for i in 1..self.get_num_row() {
-                matrix.elements.push(vec![]);
                 for l in 0..self.get_num_col() {
                     if l == j {
                         continue;
                     }
-
                     matrix.elements[i - 1].push(self.elements[i][l]);
                 }
+                if matrix.get_num_row() == self.get_num_row() - 1 {
+                    break;
+                }
+                matrix.elements.push(vec![]);
             }
             list_deter.push(matrix)
         }
-
-        for i in 0..self.get_num_row() {
-            determinant +=
-                (-1 as i128).pow(i as u32) * self.elements[0][i] * list_deter[i].matrix2x2();
+        if list_deter[0].get_num_col() == 2 {
+            for i in 0..self.get_num_row() {
+                determinant +=
+                    (-1 as i128).pow(i as u32) * self.elements[0][i] * list_deter[i].matrix2x2();
+            }
+        } else {
+            for i in 0..self.get_num_row() {
+                determinant +=
+                    (-1 as i128).pow(i as u32) * self.elements[0][i] * list_deter[i].determinant();
+            }
         }
         return determinant;
     }
@@ -192,5 +213,6 @@ impl Matrix {
 
 fn main() {
     let matrix = Matrix::construct(vec![vec![9, 7, 8], vec![0, 3, 1], vec![4, 5, 6]]);
+    matrix.display();
     eprintln!("{}", matrix.determinant())
 }
