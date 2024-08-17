@@ -31,13 +31,13 @@ impl Matrix {
     fn display(&self) {
         for i in &self.elements {
             for k in i {
-                print!("{} ", k)
+                print!(" {} ", k)
             }
             println!()
         }
     }
 
-    fn new_matrix_type(matrix_type: MatrixTypes) -> Self {
+    fn new_preset(matrix_type: MatrixTypes) -> Self {
         let mut matrix = Matrix::default();
 
         match matrix_type {
@@ -158,34 +158,39 @@ impl Matrix {
         return Ok(matrix);
     }
 
+    fn matrix2x2(&self) -> i128 {
+        self.elements[0][0] * self.elements[1][1] - self.elements[0][1] * self.elements[1][0]
+    }
     //Determinant of a matrix
-    fn determinant(&self) -> Matrix {
+    fn determinant(&self) -> i128 {
         let mut matrix = Matrix::default();
-        let determinant: i128 = 0;
+        let mut list_deter = vec![];
+        let mut determinant: i128 = 0;
 
-        for k in 0..self.get_num_row() {
-            if k != 0 {
+        for j in 0..self.get_num_col() {
+            matrix = Matrix::default();
+            for i in 1..self.get_num_row() {
                 matrix.elements.push(vec![]);
                 for l in 0..self.get_num_col() {
-                    if l != 0 {
-                        matrix.elements[k].push(self.elements[k][l]);
+                    if l == j {
+                        continue;
                     }
+
+                    matrix.elements[i - 1].push(self.elements[i][l]);
                 }
             }
+            list_deter.push(matrix)
         }
-        if matrix.get_num_col() != 2 {
-            matrix = matrix.determinant();
-        };
-        matrix
+
+        for i in 0..self.get_num_row() {
+            determinant +=
+                (-1 as i128).pow(i as u32) * self.elements[0][i] * list_deter[i].matrix2x2();
+        }
+        return determinant;
     }
 }
 
 fn main() {
-    let matrix = Matrix::construct(vec![
-        vec![1, 1, 1, 1],
-        vec![2, 2, 2, 2],
-        vec![3, 3, 3, 3],
-        vec![4, 4, 4, 4],
-    ]);
-    matrix.determinant().display();
+    let matrix = Matrix::construct(vec![vec![9, 7, 8], vec![0, 3, 1], vec![4, 5, 6]]);
+    eprintln!("{}", matrix.determinant())
 }
